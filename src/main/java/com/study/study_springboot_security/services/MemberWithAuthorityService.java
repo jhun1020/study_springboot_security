@@ -3,19 +3,31 @@ package com.study.study_springboot_security.services;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.study.study_springboot_security.daos.SharedDao;
+import com.study.study_springboot_security.utils.CommonUtils;
 import java.util.Map;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
 public class MemberWithAuthorityService {
 
     @Autowired
     SharedDao sharedDao;
 
     @Autowired
-    com.study.study_springboot_security.utils.CommonUtils CommonUtils;
+    CommonUtils commonUtils;
+
+    @Autowired
+    BCryptPasswordEncoder bcryptPasswordEncoder;
 
     public Object insert(Object dataMap){
         String sqlMapId = "Memberwithauthority.insertWithUID";
-        ((Map)dataMap).put("USER_UID", CommonUtils.getUniqueSequence());
-        ((Map)dataMap).put("role", "ROLE_USER"); // 실제로 보면 정해져있는 값이 아니다. 
+        ((Map)dataMap).put("USERS_UID", commonUtils.getUniqueSequence());
+        ((Map)dataMap).put("role", "ROLE_USER");
+        // normal to crypto password
+        String password = (String)((Map)dataMap).get("password");
+        ((Map)dataMap).put("password", bcryptPasswordEncoder.encode(password));
+
         Object result = sharedDao.insert(sqlMapId, dataMap);
         return result;
     }

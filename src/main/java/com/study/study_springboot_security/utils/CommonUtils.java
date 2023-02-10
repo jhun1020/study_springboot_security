@@ -9,6 +9,5 @@ public class CommonUtils {
     public String getUniqueSequence() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
-    }
-
+    }    
 }
